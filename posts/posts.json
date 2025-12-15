@@ -1,11 +1,11 @@
 {
   "posts": [
-    {
-      "slug": "welcome-to-neon-hack-logs",
-      "title": "Welcome to Hrishikesh's Security Logs",
-      "description": "Why this blog exists, what to expect, and how to navigate.",
-      "date": "2025-10-17",
-      "tags": ["intro", "meta"]
+        {
+      "slug": "blg1-intro-to-docker",
+      "title": "From Dockerfile to Docker Compose: A Beginner‑to‑Practitioner Guide",
+      "description": "A beginner's guide to the world of docker ",
+      "date": "2025-12-15",
+      "tags": ["intro", "docker"]
     }
 
 
