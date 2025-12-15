@@ -6,7 +6,15 @@
       "description": "A beginner's guide to the world of docker ",
       "date": "2025-12-15",
       "tags": ["intro", "docker"]
+    },
+    {
+      "slug": "cyber-maturity-assessment",
+      "title": "Guide on Conducting Cyber-maturity-Assessment",
+      "description": "This blog provides a pretext on the auditor's mindset",
+      "date": "2025-12-15",
+      "tags": ["GRC", "cyber-maturity-assessment"]
     }
+
 
 
   ]
