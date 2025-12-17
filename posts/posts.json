@@ -20,7 +20,7 @@
       "slug": "SNS_encryption",
       "title": "Do I Need to Encrypt an SNS Topic if It’s Already Encrypted in Transit?",
       "description": "If SNS messages are encrypted in transit, does encryption at rest still matter?",
-      "date": "2025-12-17T00:00:00Z",
+      "date": "2025-12-17T12:00:00",
       "tags": ["AWS", "SNS", "encryption", "cloud-security"],
       "cover": "SNS_encryption/cover.jpg"
     }
