@@ -1,33 +1,31 @@
 {
   "posts": [
-        {
+    {
       "slug": "blg1-intro-to-docker",
-      "title": "From Dockerfile to Docker Compose: A Beginner‑to‑Practitioner Guide",
-      "description": "A beginner's guide to the world of docker ",
+      "title": "From Dockerfile to Docker Compose: A Beginner-to-Practitioner Guide",
+      "description": "A beginner's guide to the world of Docker",
       "date": "2025-12-15",
-      "tags": ["intro", "docker"]
+      "tags": ["intro", "docker"],
+      "cover": "blg1-intro-to-docker/cover.jpg"
     },
     {
       "slug": "cyber-maturity-assessment",
-      "title": "Guide on Conducting Cyber-maturity-Assessment",
+      "title": "Guide on Conducting Cyber-Maturity Assessment",
       "description": "This blog provides a pretext on the auditor's mindset",
       "date": "2025-12-15",
-      "tags": ["GRC", "cyber-maturity-assessment"]
+      "tags": ["GRC", "cyber-maturity-assessment"],
+      "cover": "cyber-maturity-assessment/cover.jpg"
     },
-[
-  {
-    "slug": "blg1-intro-to-docker",
-    "title": "From Dockerfile to Docker Compose",
-    "date": "2024-12-10",
-    "tags": ["docker", "intro"],
-    "excerpt": "A beginner's guide to Docker",
-    "cover": "blg1-intro-to-docker/cover.jpg"
-  }
-]
-
-
-
+    {
+      "slug": "SNS_encryption",
+      "title": "Do I Need to Encrypt an SNS Topic if It’s Already Encrypted in Transit?",
+      "description": "If SNS messages are encrypted in transit, does encryption at rest still matter?",
+      "date": "2025-01-17",
+      "tags": ["AWS", "SNS", "encryption", "cloud-security"],
+      "cover": "SNS_encryption/cover.jpg"
+    }
   ]
 }
+
 
 
