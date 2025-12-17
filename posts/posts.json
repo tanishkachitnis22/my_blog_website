@@ -13,7 +13,17 @@
       "description": "This blog provides a pretext on the auditor's mindset",
       "date": "2025-12-15",
       "tags": ["GRC", "cyber-maturity-assessment"]
-    }
+    },
+[
+  {
+    "slug": "blg1-intro-to-docker",
+    "title": "From Dockerfile to Docker Compose",
+    "date": "2024-12-10",
+    "tags": ["docker", "intro"],
+    "excerpt": "A beginner's guide to Docker",
+    "cover": "blg1-intro-to-docker/cover.jpg"
+  }
+]
 
 
 
