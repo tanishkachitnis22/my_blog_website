@@ -4,7 +4,7 @@
       "slug": "blg1-intro-to-docker",
       "title": "From Dockerfile to Docker Compose: A Beginner-to-Practitioner Guide",
       "description": "A beginner's guide to the world of Docker",
-      "date": "2025-12-15",
+      "date": "2025-12-15T00:00:00Z",
       "tags": ["intro", "docker"],
       "cover": "blg1-intro-to-docker/cover.jpg"
     },
@@ -12,7 +12,7 @@
       "slug": "cyber-maturity-assessment",
       "title": "Guide on Conducting Cyber-Maturity Assessment",
       "description": "This blog provides a pretext on the auditor's mindset",
-      "date": "2025-12-15",
+      "date": "2025-12-15T00:00:00Z",
       "tags": ["GRC", "cyber-maturity-assessment"],
       "cover": "cyber-maturity-assessment/cover.jpg"
     },
@@ -20,12 +20,13 @@
       "slug": "SNS_encryption",
       "title": "Do I Need to Encrypt an SNS Topic if It’s Already Encrypted in Transit?",
       "description": "If SNS messages are encrypted in transit, does encryption at rest still matter?",
-      "date": "2025-01-17",
+      "date": "2025-12-17T00:00:00Z",
       "tags": ["AWS", "SNS", "encryption", "cloud-security"],
       "cover": "SNS_encryption/cover.jpg"
     }
   ]
 }
+
 
 
 
