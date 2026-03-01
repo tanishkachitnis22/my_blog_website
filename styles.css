@@ -42,9 +42,6 @@ h1, h2, h3, h4, .logo, .tag {
 /* Add a subtle grid background */
 body {
   background-color: var(--bg);
-  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 30px 30px;
 }
 
 /* Make the cards look like terminal windows */
