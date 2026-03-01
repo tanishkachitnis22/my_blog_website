@@ -1,7 +1,5 @@
 // Minimal client-side blog engine for Markdown posts
-// - Loads posts.json manifest
-// - Supports search, tag filters, and hash-based routing (#/post/slug)
-// - Renders Markdown to sanitized HTML, with Prism highlighting
+// Fixed version - handles missing elements gracefully
 
 const state = {
   posts: [],
@@ -25,7 +23,6 @@ const elements = {
   loadingIndicator: document.getElementById("loadingIndicator"),
   scrollToTop: document.getElementById("scrollToTop"),
 };
-
 
 async function loadManifest() {
   if (elements.loadingIndicator) {
@@ -60,6 +57,8 @@ function getTagCounts() {
 }
 
 function renderTags() {
+  if (!elements.tagsContainer) return;
+  
   const counts = getTagCounts();
   const allCount = state.posts.length;
   const tags = ["all", ...Array.from(state.tags).sort((a, b) => a.localeCompare(b))];
@@ -73,7 +72,7 @@ function renderTags() {
     el.setAttribute("type", "button");
     el.setAttribute("aria-pressed", isActive ? "true" : "false");
     el.setAttribute("data-tag", tag);
-    el.innerHTML = `${escapeHtml(tag)} <span class="tag-count">${count}</span>`;
+    el.innerHTML = `#${escapeHtml(tag)} <span class="tag-count">${count}</span>`;
     el.addEventListener("click", () => {
       state.filteredTag = isAll ? null : tag;
       renderTags();
@@ -87,7 +86,6 @@ function normalizeString(value) {
   return (value || "").toLowerCase().trim();
 }
 
-// Debounce function for search
 let searchTimeout = null;
 function updateSearch(query) {
   clearTimeout(searchTimeout);
@@ -114,6 +112,8 @@ function formatDate(date) {
 }
 
 function renderList() {
+  if (!elements.postList) return;
+  
   const filtered = state.posts.filter(matchesFilters);
   if (filtered.length === 0) {
     const q = state.searchQuery;
@@ -121,23 +121,19 @@ function renderList() {
     elements.postList.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">🔍</div>
-        <h3>No results found</h3>
-        <p>${hasFilters ? `Nothing matches your ${q ? `search "${escapeHtml(q)}"` : ""}${q && state.filteredTag ? " and " : ""}${state.filteredTag ? `tag "${escapeHtml(state.filteredTag)}"` : ""}.` : "Try another keyword or clear filters."}</p>
+        <h3>No posts found</h3>
+        <p>${hasFilters ? `Nothing matches your filters.` : "No posts available."}</p>
         ${hasFilters ? `<button class="btn btn-primary clear-filters" onclick="clearFilters()">Clear filters</button>` : ""}
       </div>`;
     return;
   }
+  
+  // Minimal list layout (no cards, no images)
   elements.postList.innerHTML = filtered.map(post => {
     const dateStr = formatDate(post.date);
-    const firstTag = (post.tags || [])[0] || "";
-    const imageUrl = `./posts/${post.slug}/cover.jpg`;
-    const initial = post.title.charAt(0).toUpperCase();
+    const tags = (post.tags || []).map(t => `#${escapeHtml(t)}`).join(' ');
     return `
       <a class="card" href="#/post/${post.slug}" aria-label="Read ${escapeHtml(post.title)}">
-        <div class="card-image-wrapper">
-          <img src="${imageUrl}" alt="${escapeHtml(post.title)}" class="card-image" onerror="this.onerror=null; this.parentElement.classList.add('no-image');">
-          <div class="card-image-placeholder">${initial}</div>
-        </div>
         <div class="card-content">
           <div class="card-title-box">
             <h3>${escapeHtml(post.title)}</h3>
@@ -145,14 +141,13 @@ function renderList() {
           </div>
           <div class="meta">
             <time datetime="${post.date.toISOString()}">${dateStr}</time>
-            ${firstTag ? `<span>${escapeHtml(firstTag)}</span>` : ''}
+            <span>${tags}</span>
           </div>
         </div>
       </a>`;
   }).join("");
 }
 
-// Global function for clearing filters
 window.clearFilters = function() {
   state.searchQuery = "";
   state.filteredTag = null;
@@ -169,18 +164,19 @@ function rewriteRelativeImageSrcs(container, slug) {
   const imgs = container.querySelectorAll("img[src]");
   imgs.forEach(img => {
     const src = img.getAttribute("src") || "";
-    // Skip absolute/protocol/data/hash sources
     if (/^(?:[a-z][a-z0-9+.-]*:|\/|#|data:)/i.test(src)) return;
     img.setAttribute("src", `./posts/${slug}/${src}`);
   });
 }
 
 async function showHome() {
-  elements.homeView.classList.remove("view--hidden");
-  elements.postView.classList.add("view--hidden");
+  if (elements.homeView) elements.homeView.classList.remove("view--hidden");
+  if (elements.postView) elements.postView.classList.add("view--hidden");
 }
 
 function buildToc(slug) {
+  if (!elements.toc || !elements.postContent) return;
+  
   const headings = elements.postContent.querySelectorAll("h2, h3");
   if (!headings.length) {
     elements.toc.innerHTML = "";
@@ -197,54 +193,49 @@ function buildToc(slug) {
 async function showPost(slug, anchorId) {
   const post = state.posts.find(p => p.slug === slug);
   if (!post) {
-    elements.postTitle.textContent = "Not found";
-    elements.postContent.innerHTML = "<p>Post not found.</p>";
-    elements.postDate.textContent = "";
-    elements.postTags.innerHTML = "";
-    elements.homeView.classList.add("view--hidden");
-    elements.postView.classList.remove("view--hidden");
+    if (elements.postTitle) elements.postTitle.textContent = "Not found";
+    if (elements.postContent) elements.postContent.innerHTML = "<p>Post not found.</p>";
+    if (elements.postDate) elements.postDate.textContent = "";
+    if (elements.postTags) elements.postTags.innerHTML = "";
+    if (elements.homeView) elements.homeView.classList.add("view--hidden");
+    if (elements.postView) elements.postView.classList.remove("view--hidden");
     return;
   }
   
-  // Show loading state
-  elements.postContent.innerHTML = '<div class="loading-indicator" style="display: flex;"><div class="loading-spinner"></div><p>Loading post...</p></div>';
-  elements.homeView.classList.add("view--hidden");
-  elements.postView.classList.remove("view--hidden");
+  if (elements.postContent) {
+    elements.postContent.innerHTML = '<div class="loading-indicator" style="display: flex;"><div class="loading-spinner"></div><p>Loading post...</p></div>';
+  }
+  if (elements.homeView) elements.homeView.classList.add("view--hidden");
+  if (elements.postView) elements.postView.classList.remove("view--hidden");
   
   try {
     const res = await fetch(`./posts/${post.slug}.md`);
     if (!res.ok) throw new Error(`Failed to load post: ${res.statusText}`);
     const markdown = await res.text();
 
-  elements.postTitle.textContent = post.title;
-  elements.postDate.textContent = formatDate(post.date);
-  elements.postDate.setAttribute("datetime", post.date.toISOString());
-  elements.postTags.innerHTML = (post.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("");
+    if (elements.postTitle) elements.postTitle.textContent = post.title;
+    if (elements.postDate) {
+      elements.postDate.textContent = formatDate(post.date);
+      elements.postDate.setAttribute("datetime", post.date.toISOString());
+    }
+    if (elements.postTags) {
+      elements.postTags.innerHTML = (post.tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join("");
+    }
 
-  // Render markdown safely
-  const html = marked.parse(markdown, { mangle: false, headerIds: true });
-  const clean = DOMPurify.sanitize(html, { USE_PROFILES: { html: true, svg: true } });
-  elements.postContent.innerHTML = clean;
+    const html = marked.parse(markdown, { mangle: false, headerIds: true });
+    const clean = DOMPurify.sanitize(html, { USE_PROFILES: { html: true, svg: true } });
+    if (elements.postContent) elements.postContent.innerHTML = clean;
 
-  // Rewrite relative image sources to posts/<slug>/
-  rewriteRelativeImageSrcs(elements.postContent, post.slug);
+    rewriteRelativeImageSrcs(elements.postContent, post.slug);
+    buildToc(slug);
 
-  // Build TOC with slug-aware links
-  buildToc(slug);
+    if (window.Prism && elements.postContent) {
+      Prism.highlightAllUnder(elements.postContent);
+    }
 
-  // Highlight code blocks
-  if (window.Prism) {
-    Prism.highlightAllUnder(elements.postContent);
-  }
-
-  elements.homeView.classList.add("view--hidden");
-  elements.postView.classList.remove("view--hidden");
-
-    // Scroll to anchor (if provided or present in hash)
     const hashMatch = (typeof anchorId === 'string' && anchorId) ? [null, anchorId] : location.hash.match(/^#\/post\/[A-Za-z0-9-_]+#([A-Za-z0-9\-]+)/);
     const targetId = (hashMatch && hashMatch[1]) ? hashMatch[1] : null;
     if (targetId) {
-      // Small delay to ensure content is rendered
       setTimeout(() => {
         const el = document.getElementById(targetId);
         if (el && typeof el.scrollIntoView === 'function') {
@@ -252,12 +243,13 @@ async function showPost(slug, anchorId) {
         }
       }, 100);
     } else {
-      // Scroll to top of post
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } catch (error) {
     console.error("Error loading post:", error);
-    elements.postContent.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error loading post</h3><p>${escapeHtml(error.message || "Failed to load post content.")}</p></div>`;
+    if (elements.postContent) {
+      elements.postContent.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error loading post</h3><p>${escapeHtml(error.message || "Failed to load post content.")}</p></div>`;
+    }
   }
 }
 
@@ -283,28 +275,29 @@ function scrollToTop() {
 }
 
 function initEvents() {
-  elements.searchInput.addEventListener("input", e => updateSearch(e.target.value));
-  elements.searchInput.addEventListener("search", e => updateSearch(e.target.value));
-  elements.searchInput.addEventListener("keydown", e => {
-    if (e.key === "Escape") { 
-      updateSearch(""); 
-      elements.searchInput.value = "";
-      elements.searchInput.blur();
-    }
-    // Keyboard shortcut: Ctrl/Cmd + K to focus search
-    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-      e.preventDefault();
-      elements.searchInput.focus();
-      elements.searchInput.select();
-    }
-  });
+  // Search input (optional - may not exist in minimal theme)
+  if (elements.searchInput) {
+    elements.searchInput.addEventListener("input", e => updateSearch(e.target.value));
+    elements.searchInput.addEventListener("search", e => updateSearch(e.target.value));
+    elements.searchInput.addEventListener("keydown", e => {
+      if (e.key === "Escape") { 
+        updateSearch(""); 
+        elements.searchInput.value = "";
+        elements.searchInput.blur();
+      }
+    });
+  }
 
-  elements.randomBtn.addEventListener("click", () => {
-    if (!state.posts.length) return;
-    const idx = Math.floor(Math.random() * state.posts.length);
-    location.hash = `#/post/${state.posts[idx].slug}`;
-  });
+  // Random button (optional - may not exist in minimal theme)
+  if (elements.randomBtn) {
+    elements.randomBtn.addEventListener("click", () => {
+      if (!state.posts.length) return;
+      const idx = Math.floor(Math.random() * state.posts.length);
+      location.hash = `#/post/${state.posts[idx].slug}`;
+    });
+  }
   
+  // Back link
   const backLink = document.querySelector(".back-link");
   if (backLink) {
     backLink.addEventListener("click", (e) => {
@@ -313,15 +306,19 @@ function initEvents() {
     });
   }
   
-  const homeLink = document.querySelector(".btn-primary[href='#']");
-  if (homeLink) {
-    homeLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      location.hash = "";
-      scrollToTop();
-    });
-  }
+  // Home link in nav
+  const homeLinks = document.querySelectorAll('a[href="#"], .nav-bar a:first-child');
+  homeLinks.forEach(link => {
+    if (link.textContent.toLowerCase().includes('home') || link.textContent.toLowerCase().includes('blog')) {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        location.hash = "";
+        scrollToTop();
+      });
+    }
+  });
   
+  // Back to top link in footer
   const backToTopLink = document.querySelector(".back-to-top-link");
   if (backToTopLink) {
     backToTopLink.addEventListener("click", (e) => {
@@ -330,32 +327,29 @@ function initEvents() {
     });
   }
 
+  // Scroll to top button
   if (elements.scrollToTop) {
     elements.scrollToTop.addEventListener("click", scrollToTop);
   }
 
   window.addEventListener("hashchange", onHashChange);
   window.addEventListener("scroll", handleScrollToTop);
-  handleScrollToTop(); // Initial check
+  handleScrollToTop();
 
   // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
-    // Don't trigger shortcuts when typing in inputs
     if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
     
-    // Press '/' to focus search
-    if (e.key === "/" && !e.ctrlKey && !e.metaKey) {
+    if (e.key === "/" && !e.ctrlKey && !e.metaKey && elements.searchInput) {
       e.preventDefault();
       elements.searchInput.focus();
     }
     
-    // Press 'r' for random post
-    if (e.key === "r" && !e.ctrlKey && !e.metaKey) {
+    if (e.key === "r" && !e.ctrlKey && !e.metaKey && elements.randomBtn) {
       e.preventDefault();
       elements.randomBtn.click();
     }
   });
-
 }
 
 async function main() {
@@ -368,7 +362,7 @@ async function main() {
 
 main().catch(err => {
   console.error(err);
-  elements.postList.innerHTML = `<div class="card"><h3>Load error</h3><p>${escapeHtml(String(err.message || err))}</p></div>`;
+  if (elements.postList) {
+    elements.postList.innerHTML = `<div class="empty-state"><h3>Load error</h3><p>${escapeHtml(String(err.message || err))}</p></div>`;
+  }
 });
-
-
