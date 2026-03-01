@@ -5,34 +5,26 @@
   - Monospace headers
 */
 
-:root {
-  /* Core Colors */
-  --bg: #0a0a0a;             /* Deepest black */
-  --bg-2: #111111;           /* Card background */
-  --bg-3: #1a1a1a;           /* Hover states */
+  :root {
+  --bg: #f8fafc;
+  --bg-2: #ffffff;
+  --bg-3: #f1f5f9;
 
-  /* Typography */
-  --text: #e5e5e5;           /* Main text */
-  --text-secondary: #a3a3a3; /* Subtitles */
-  --muted: #525252;          /* Placeholders */
+  --text: #111827;
+  --text-secondary: #6b7280;
+  --muted: #9ca3af;
 
-  /* Accents (Cyber Green) */
-  --accent: #00ff41;         /* classic terminal green */
-  --accent-hover: #00cc33;
+  --accent: #16a34a;      /* calm green */
+  --accent-hover: #15803d;
 
-  /* Borders & Shadows */
-  --border: #333;
-  --border-hover: #00ff41;   /* Glow effect on hover */
-  --card-bg: #111111;
-  --card-border: #333;
+  --border: #e5e7eb;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
 
-  /* Interactive */
-  --link: #00ff41;
-  --link-hover: #ffffff;
-  --selection: rgba(0, 255, 65, 0.2);
-  --shadow: rgba(0, 255, 65, 0.1);
+  --link: #16a34a;
+  --link-hover: #0f172a;
 }
-
+ 
 /* Override fonts for a tech feel */
 h1, h2, h3, h4, .logo, .tag {
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
